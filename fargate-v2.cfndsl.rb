@@ -81,7 +81,7 @@ CloudFormation do
       targetgroup['rules'].each_with_index do |rule, index|
         listener_conditions = []
         if rule.key?("path")
-          listener_conditions << { Field: "path-pattern", Values: [ rule["path"] ] }
+          listener_conditions << { Field: "path-pattern", Values: [ rule["path"] ].flatten() }
         end
         if rule.key?("host")
           hosts = []
