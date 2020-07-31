@@ -96,11 +96,19 @@ CloudFormation do
           listener_conditions << { Field: "host-header", Values: hosts }
         end
 
-        ElasticLoadBalancingV2_ListenerRule("TargetRule#{rule['priority']}") do
+        if rule.key?("name")
+          rule_name = rule['name']
+        elsif rule['priority'].is_a? Integer
+          rule_name = "TargetRule#{rule['priority']}"
+        else
+          rule_name = "TargetRule#{index}"
+        end
+
+        ElasticLoadBalancingV2_ListenerRule(rule_name) do
           Actions [{ Type: "forward", TargetGroupArn: Ref('TaskTargetGroup') }]
           Conditions listener_conditions
           ListenerArn Ref("Listener")
-          Priority rule['priority'].to_i
+          Priority rule['priority']
         end
 
       end
